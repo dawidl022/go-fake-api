@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"server/models"
@@ -26,41 +27,42 @@ type server struct {
 }
 
 func StartServer() {
-	s := newServer()
+	s := newServer("")
 	s.r.Use(jsonHeaders)
 	s.routes()
 
 	http.ListenAndServe(":3000", s.r)
 }
 
-func loadData() *data {
+func loadData(baseDir string) *data {
 	d := data{}
+	dir := baseDir + "data/"
 
-	rawAlbums, _ := os.ReadFile("data/albums.json")
+	rawAlbums, _ := os.ReadFile(fmt.Sprintf("%salbums.json", dir))
 	json.Unmarshal(rawAlbums, &d.a)
 
-	rawComments, _ := os.ReadFile("data/comments.json")
+	rawComments, _ := os.ReadFile(fmt.Sprintf("%scomments.json", dir))
 	json.Unmarshal(rawComments, &d.c)
 
-	rawPhotos, _ := os.ReadFile("data/photos.json")
+	rawPhotos, _ := os.ReadFile(fmt.Sprintf("%sphotos.json", dir))
 	json.Unmarshal(rawPhotos, &d.photos)
 
-	rawPosts, _ := os.ReadFile("data/posts.json")
+	rawPosts, _ := os.ReadFile(fmt.Sprintf("%sposts.json", dir))
 	json.Unmarshal(rawPosts, &d.posts)
 
-	rawTodos, _ := os.ReadFile("data/todos.json")
+	rawTodos, _ := os.ReadFile(fmt.Sprintf("%stodos.json", dir))
 	json.Unmarshal(rawTodos, &d.t)
 
-	rawUsers, _ := os.ReadFile("data/users.json")
+	rawUsers, _ := os.ReadFile(fmt.Sprintf("%susers.json", dir))
 	json.Unmarshal(rawUsers, &d.u)
 
 	return &d
 }
 
-func newServer() server {
+func newServer(baseDir string) server {
 	s := server{
 		r: chi.NewRouter(),
-		d: loadData(),
+		d: loadData(baseDir),
 	}
 
 	s.r.Use(middleware.RequestID)
