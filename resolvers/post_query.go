@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"server/models"
 	"strconv"
@@ -11,57 +10,77 @@ import (
 )
 
 type PostQuery struct {
-	p    map[string]*Post
-	keys []string
+	posts map[string]*Post
+	keys  []string
 }
 
-func (pq *PostQuery) setup() {
-	rawPosts, _ := os.ReadFile("data/posts.json")
-	var pm []*models.Post
+func NewPostQuery() *PostQuery {
+	p := PostQuery{}
+	p.setup()
 
-	json.Unmarshal(rawPosts, &pm)
-	pq.p = make(map[string]*Post)
+	return &p
+}
 
-	for _, post := range pm {
-		id := fmt.Sprint(post.Id)
-		pq.p[id] = &Post{pm: post}
-		pq.keys = append(pq.keys, id)
+func (p *PostQuery) setup() error {
+	rawPosts, err := os.ReadFile("data/posts.json")
+	if err != nil {
+		return err
 	}
+
+	var pm []*models.Post
+	err = json.Unmarshal(rawPosts, &pm)
+	if err != nil {
+		return err
+	}
+
+	p.posts = make(map[string]*Post)
+	for _, post := range pm {
+		id := strconv.Itoa(post.Id)
+		p.posts[id] = &Post{pm: post}
+		p.keys = append(p.keys, id)
+	}
+
+	return nil
 }
 
-func (pq *PostQuery) Posts() []*Post {
-	res := make([]*Post, 0, len(pq.p))
+func (p *PostQuery) Posts() []*Post {
+	res := make([]*Post, 0, len(p.posts))
 
-	for _, k := range pq.keys {
-		res = append(res, pq.p[k])
+	for _, k := range p.keys {
+		res = append(res, p.posts[k])
 	}
 
 	return res
 }
 
-func (pq *PostQuery) Post(args struct{ Id graphql.ID }) *Post {
-	// TODO handle out of bounds error
-
-	return pq.p[string(args.Id)]
+type postArgs struct {
+	ID graphql.ID
 }
 
-func (pq *PostQuery) PostsByUser(args struct{ UserId graphql.ID }) []*Post {
+func (p *PostQuery) Post(args postArgs) *Post {
+	// TODO handle invalid id
+
+	return p.posts[string(args.ID)]
+}
+
+type postsByUserArgs struct {
+	UserID graphql.ID
+}
+
+func (p *PostQuery) PostsByUser(args postsByUserArgs) ([]*Post, error) {
 	var res []*Post
 
-	for _, k := range pq.keys {
-		userId, _ := strconv.Atoi(string(args.UserId))
-		p := pq.p[k]
+	for _, k := range p.keys {
+		userId, err := strconv.Atoi(string(args.UserID))
+		if err != nil {
+			return nil, err
+		}
+
+		p := p.posts[k]
 		if p.pm.UserId == userId {
 			res = append(res, p)
 		}
 	}
 
-	return res
-}
-
-func NewPostQuery() *PostQuery {
-	pq := PostQuery{}
-	pq.setup()
-
-	return &pq
+	return res, nil
 }

@@ -1,8 +1,8 @@
 package resolvers
 
 import (
-	"fmt"
 	"server/models"
+	"strconv"
 
 	"github.com/graph-gophers/graphql-go"
 )
@@ -12,11 +12,11 @@ type Album struct {
 }
 
 func (a *Album) Id() graphql.ID {
-	return graphql.ID(fmt.Sprint(a.am.Id))
+	return graphql.ID(strconv.Itoa(a.am.Id))
 }
 
 func (a *Album) UserId() graphql.ID {
-	return graphql.ID(fmt.Sprint(a.am.UserId))
+	return graphql.ID(strconv.Itoa(a.am.UserId))
 }
 
 func (a *Album) Title() string {

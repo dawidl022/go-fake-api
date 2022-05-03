@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"server/models"
 	"strconv"
@@ -11,57 +10,77 @@ import (
 )
 
 type AlbumQuery struct {
-	a    map[string]*Album
-	keys []string
+	albums map[string]*Album
+	keys   []string
 }
 
-func (aq *AlbumQuery) setup() {
-	rawAlbums, _ := os.ReadFile("data/albums.json")
-	var am []*models.Album
+func NewAlbumQuery() *AlbumQuery {
+	a := AlbumQuery{}
+	a.setup()
 
-	json.Unmarshal(rawAlbums, &am)
-	aq.a = make(map[string]*Album)
+	return &a
+}
 
-	for _, album := range am {
-		id := fmt.Sprint(album.Id)
-		aq.a[id] = &Album{am: album}
-		aq.keys = append(aq.keys, id)
+func (a *AlbumQuery) setup() error {
+	rawAlbums, err := os.ReadFile("data/albums.json")
+	if err != nil {
+		return err
 	}
+
+	var am []*models.Album
+	err = json.Unmarshal(rawAlbums, &am)
+	if err != nil {
+		return err
+	}
+
+	a.albums = make(map[string]*Album)
+	for _, album := range am {
+		id := strconv.Itoa(album.Id)
+		a.albums[id] = &Album{am: album}
+		a.keys = append(a.keys, id)
+	}
+
+	return nil
 }
 
-func (aq *AlbumQuery) Albums() []*Album {
-	res := make([]*Album, 0, len(aq.a))
+func (a *AlbumQuery) Albums() []*Album {
+	res := make([]*Album, 0, len(a.albums))
 
-	for _, k := range aq.keys {
-		res = append(res, aq.a[k])
+	for _, k := range a.keys {
+		res = append(res, a.albums[k])
 	}
 
 	return res
 }
 
-func (aq *AlbumQuery) Album(args struct{ Id graphql.ID }) *Album {
-	// TODO handle out of bounds error
-
-	return aq.a[string(args.Id)]
+type albumArgs struct {
+	ID graphql.ID
 }
 
-func (aq *AlbumQuery) AlbumsByUser(args struct{ UserId graphql.ID }) []*Album {
+func (a *AlbumQuery) Album(args albumArgs) *Album {
+	// TODO handle invalid id
+
+	return a.albums[string(args.ID)]
+}
+
+type albumsByUserArgs struct {
+	UserID graphql.ID
+}
+
+func (a *AlbumQuery) AlbumsByUser(args albumsByUserArgs) ([]*Album, error) {
 	var res []*Album
 
-	for _, k := range aq.keys {
-		userId, _ := strconv.Atoi(string(args.UserId))
-		a := aq.a[k]
+	for _, k := range a.keys {
+		userId, err := strconv.Atoi(string(args.UserID))
+		if err != nil {
+			return nil, err
+		}
+
+		a := a.albums[k]
 		if a.am.UserId == userId {
 			res = append(res, a)
 		}
 	}
 
-	return res
-}
-
-func NewAlbumQuery() *AlbumQuery {
-	aq := AlbumQuery{}
-	aq.setup()
-
-	return &aq
+	return res, nil
 }
