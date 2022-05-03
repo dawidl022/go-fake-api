@@ -1,0 +1,5 @@
+# type Album {
+#     id: ID!
+#     userId: ID!
+#     title: String!
+# }
