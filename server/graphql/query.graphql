@@ -2,4 +2,8 @@ type Query {
     albums: [Album!]!
     album(id: ID!): Album!
     albumsByUser(userId: ID!): [Album!]!
+
+    posts: [Post!]!
+    post(id: ID!): Post!
+    postsByUser(userId: ID!): [Post!]!
 }

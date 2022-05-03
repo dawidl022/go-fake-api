@@ -33,13 +33,12 @@ func concatFiles(dirname string, filenames ...string) (string, error) {
 }
 
 func StartServer() {
-	b, err := concatFiles("server/graphql", "query.graphql", "album.graphql")
+	b, err := concatFiles("server/graphql", "query.graphql", "album.graphql", "post.graphql")
 	if err != nil {
 		log.Fatal("Cannot read grapql schema files")
 	}
 
-	aq := &resolvers.AlbumQuery{}
-	aq.Setup()
+	aq := resolvers.NewRootResolver()
 
 	schema := graphql.MustParseSchema(string(b), aq)
 	http.Handle("/query", &relay.Handler{Schema: schema})

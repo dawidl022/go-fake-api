@@ -15,7 +15,7 @@ type AlbumQuery struct {
 	keys []string
 }
 
-func (aq *AlbumQuery) Setup() {
+func (aq *AlbumQuery) setup() {
 	rawAlbums, _ := os.ReadFile("data/albums.json")
 	var am []*models.Album
 
@@ -57,4 +57,11 @@ func (aq *AlbumQuery) AlbumsByUser(args struct{ UserId graphql.ID }) []*Album {
 	}
 
 	return res
+}
+
+func NewAlbumQuery() *AlbumQuery {
+	aq := AlbumQuery{}
+	aq.setup()
+
+	return &aq
 }
