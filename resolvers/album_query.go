@@ -2,6 +2,7 @@ package resolvers
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"server/models"
 	"strconv"
@@ -10,8 +11,8 @@ import (
 )
 
 type AlbumQuery struct {
-	a []*Album
-	// TODO change to map[string]*Album
+	a    map[string]*Album
+	keys []string
 }
 
 func (aq *AlbumQuery) Setup() {
@@ -19,28 +20,37 @@ func (aq *AlbumQuery) Setup() {
 	var am []*models.Album
 
 	json.Unmarshal(rawAlbums, &am)
+	aq.a = make(map[string]*Album)
 
 	for _, album := range am {
-		aq.a = append(aq.a, &Album{am: album})
+		id := fmt.Sprint(album.Id)
+		aq.a[id] = &Album{am: album}
+		aq.keys = append(aq.keys, id)
 	}
 }
 
 func (aq *AlbumQuery) Albums() []*Album {
-	return aq.a
+	res := make([]*Album, 0, len(aq.a))
+
+	for _, k := range aq.keys {
+		res = append(res, aq.a[k])
+	}
+
+	return res
 }
 
 func (aq *AlbumQuery) Album(args struct{ Id graphql.ID }) *Album {
 	// TODO handle out of bounds error
 
-	i, _ := strconv.Atoi(string(args.Id))
-	return aq.a[i-1]
+	return aq.a[string(args.Id)]
 }
 
-func (aq *AlbumQuery) AlbumByUser(args struct{ UserId graphql.ID }) []*Album {
+func (aq *AlbumQuery) AlbumsByUser(args struct{ UserId graphql.ID }) []*Album {
 	var res []*Album
 
-	for _, a := range aq.a {
+	for _, k := range aq.keys {
 		userId, _ := strconv.Atoi(string(args.UserId))
+		a := aq.a[k]
 		if a.am.UserId == userId {
 			res = append(res, a)
 		}
