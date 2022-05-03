@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,10 +16,26 @@ func graphiql(w http.ResponseWriter, r *http.Request) {
 	w.Write(s)
 }
 
+func concatFiles(dirname string, filenames ...string) (string, error) {
+	var res []byte
+
+	for _, filename := range filenames {
+		b, err := os.ReadFile(fmt.Sprintf("%s/%s", dirname, filename))
+
+		if err != nil {
+			return string(res), err
+		}
+
+		res = append(res, b...)
+	}
+
+	return string(res), nil
+}
+
 func StartServer() {
-	b, err := os.ReadFile("server/graphql/query.graphql")
+	b, err := concatFiles("server/graphql", "query.graphql", "album.graphql")
 	if err != nil {
-		log.Fatal("Cannot read grapql schema file")
+		log.Fatal("Cannot read grapql schema files")
 	}
 
 	aq := &resolvers.AlbumQuery{}

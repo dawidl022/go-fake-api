@@ -2,9 +2,3 @@ type Query {
     albums: [Album!]!
     album(id: ID!): Album!
 }
-
-type Album {
-    id: ID!
-    userId: ID!
-    title: String!
-}
