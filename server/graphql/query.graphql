@@ -1,4 +1,5 @@
 type Query {
     albums: [Album!]!
     album(id: ID!): Album!
+    albumByUser(userId: ID!): [Album!]!
 }

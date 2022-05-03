@@ -11,6 +11,7 @@ import (
 
 type AlbumQuery struct {
 	a []*Album
+	// TODO change to map[string]*Album
 }
 
 func (aq *AlbumQuery) Setup() {
@@ -33,4 +34,17 @@ func (aq *AlbumQuery) Album(args struct{ Id graphql.ID }) *Album {
 
 	i, _ := strconv.Atoi(string(args.Id))
 	return aq.a[i-1]
+}
+
+func (aq *AlbumQuery) AlbumByUser(args struct{ UserId graphql.ID }) []*Album {
+	var res []*Album
+
+	for _, a := range aq.a {
+		userId, _ := strconv.Atoi(string(args.UserId))
+		if a.am.UserId == userId {
+			res = append(res, a)
+		}
+	}
+
+	return res
 }
