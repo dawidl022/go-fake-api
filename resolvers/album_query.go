@@ -4,20 +4,33 @@ import (
 	"encoding/json"
 	"os"
 	"server/models"
+	"strconv"
+
+	"github.com/graph-gophers/graphql-go"
 )
 
-type Query struct{}
+type AlbumQuery struct {
+	a []*Album
+}
 
-func (*Query) Albums() []*Album {
+func (aq *AlbumQuery) Setup() {
 	rawAlbums, _ := os.ReadFile("data/albums.json")
 	var am []*models.Album
 
 	json.Unmarshal(rawAlbums, &am)
 
-	var a []*Album
 	for _, album := range am {
-		a = append(a, &Album{am: album})
+		aq.a = append(aq.a, &Album{am: album})
 	}
+}
 
-	return a
+func (aq *AlbumQuery) Albums() []*Album {
+	return aq.a
+}
+
+func (aq *AlbumQuery) Album(args struct{ Id graphql.ID }) *Album {
+	// TODO handle out of bounds error
+
+	i, _ := strconv.Atoi(string(args.Id))
+	return aq.a[i-1]
 }

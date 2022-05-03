@@ -1,6 +1,6 @@
 type Query {
     albums: [Album!]!
-    # album(id: ID!): Album!
+    album(id: ID!): Album!
 }
 
 type Album {

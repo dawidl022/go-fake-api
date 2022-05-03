@@ -21,7 +21,10 @@ func StartServer() {
 		log.Fatal("Cannot read grapql schema file")
 	}
 
-	schema := graphql.MustParseSchema(string(b), &resolvers.Query{})
+	aq := &resolvers.AlbumQuery{}
+	aq.Setup()
+
+	schema := graphql.MustParseSchema(string(b), aq)
 	http.Handle("/query", &relay.Handler{Schema: schema})
 	http.HandleFunc("/graphql", graphiql)
 	log.Fatal(http.ListenAndServe(":8080", nil))
