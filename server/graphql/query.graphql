@@ -10,4 +10,6 @@ type Query {
 
 type Mutation {
     createAlbum(userId: ID!, title: String!): Album!
+    deleteAlbum(id: ID!): Album!
+    updateAlbum(id: ID!, userId: ID, title: String): Album!
 }

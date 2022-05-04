@@ -25,10 +25,13 @@ type albumArgs struct {
 	ID graphql.ID
 }
 
-func (a *AlbumQuery) Album(args albumArgs) *Album {
+func (a *AlbumQuery) Album(args albumArgs) (*Album, error) {
 	var album models.Album
-	a.db.First(&album, args.ID)
-	return &Album{am: &album}
+	result := a.db.First(&album, args.ID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &Album{am: &album}, nil
 }
 
 type albumsByUserArgs struct {

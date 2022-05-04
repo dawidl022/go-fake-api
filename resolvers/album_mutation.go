@@ -9,11 +9,12 @@ import (
 )
 
 type AlbumMutation struct {
-	db *gorm.DB
+	db    *gorm.DB
+	query *AlbumQuery
 }
 
 func NewAlbumMutation(db *gorm.DB) *AlbumMutation {
-	return &AlbumMutation{db: db}
+	return &AlbumMutation{db: db, query: &AlbumQuery{db: db}}
 }
 
 type createAlbumArgs struct {
@@ -39,4 +40,41 @@ func (a *AlbumMutation) CreateAlbum(args createAlbumArgs) (*Album, error) {
 	a.db.Create(&album)
 
 	return &Album{am: &album}, nil
+}
+
+type deleteAlbumArgs struct {
+	ID graphql.ID
+}
+
+func (a *AlbumMutation) DeleteAlbum(args deleteAlbumArgs) (*Album, error) {
+	album, err := a.query.Album(albumArgs(args))
+	if err != nil {
+		return nil, err
+	}
+
+	a.db.Delete(&models.Album{}, args.ID)
+	return album, nil
+}
+
+type updateAlbumArgs struct {
+	ID     graphql.ID
+	UserId *int
+	Title  *string
+}
+
+func (a *AlbumMutation) UpdateAlbum(args updateAlbumArgs) (*Album, error) {
+	album, err := a.query.Album(albumArgs{ID: args.ID})
+	if err != nil {
+		return nil, err
+	}
+
+	if args.UserId != nil {
+		album.am.UserId = *args.UserId
+	}
+	if args.Title != nil {
+		album.am.Title = *args.Title
+	}
+
+	a.db.Save(&album.am)
+	return album, nil
 }
