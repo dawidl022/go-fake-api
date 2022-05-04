@@ -11,8 +11,8 @@ type Album struct {
 	am *models.Album
 }
 
-func (a *Album) Id() graphql.ID {
-	return graphql.ID(strconv.Itoa(a.am.Id))
+func (a *Album) ID() graphql.ID {
+	return graphql.ID(strconv.Itoa(a.am.ID))
 }
 
 func (a *Album) UserId() graphql.ID {

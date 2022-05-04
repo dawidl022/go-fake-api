@@ -7,3 +7,7 @@ type Query {
     post(id: ID!): Post!
     postsByUser(userId: ID!): [Post!]!
 }
+
+type Mutation {
+    createAlbum(userId: ID!, title: String!): Album!
+}

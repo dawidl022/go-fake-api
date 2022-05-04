@@ -16,6 +16,7 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type server struct {
@@ -103,8 +104,8 @@ func seedDB(db *gorm.DB, conf *config.Config) error {
 	return nil
 }
 
-func load[T any](db *gorm.DB, filename string, conf *config.Config) error {
-	raw, err := os.ReadFile(fmt.Sprintf("%sdata/%s.json", conf.BaseDir, filename))
+func load[T any](db *gorm.DB, tableName string, conf *config.Config) error {
+	raw, err := os.ReadFile(fmt.Sprintf("%sdata/%s.json", conf.BaseDir, tableName))
 	if err != nil {
 		return err
 	}
@@ -116,13 +117,17 @@ func load[T any](db *gorm.DB, filename string, conf *config.Config) error {
 	}
 
 	db.Create(models)
+	// TODO handle SQL errors too?
+	db.Exec(fmt.Sprintf("SELECT setval('%s_id_seq', (SELECT MAX(id) from %s))", tableName, tableName))
 	return nil
 }
 
 func connectDB(conf *config.Config) (*gorm.DB, error) {
 	return gorm.Open(postgres.New(postgres.Config{
 		DSN: conf.DatabaseUrl,
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 }
 
 func concatFiles(dirname string, filenames ...string) (string, error) {
