@@ -1,60 +1,24 @@
 package resolvers
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
 	"server/models"
-	"strconv"
 
 	"github.com/graph-gophers/graphql-go"
+	"gorm.io/gorm"
 )
 
 type AlbumQuery struct {
-	albums map[string]*Album
-	keys   []string
+	db *gorm.DB
 }
 
-func NewAlbumQuery(basedir string) (*AlbumQuery, error) {
-	a := AlbumQuery{}
-	err := a.setup(basedir)
-	if err != nil {
-		return nil, err
-	}
-
-	return &a, nil
-}
-
-func (a *AlbumQuery) setup(basedir string) error {
-	rawAlbums, err := os.ReadFile(fmt.Sprintf("%sdata/albums.json", basedir))
-	if err != nil {
-		return err
-	}
-
-	var am []*models.Album
-	err = json.Unmarshal(rawAlbums, &am)
-	if err != nil {
-		return err
-	}
-
-	a.albums = make(map[string]*Album)
-	for _, album := range am {
-		id := strconv.Itoa(album.Id)
-		a.albums[id] = &Album{am: album}
-		a.keys = append(a.keys, id)
-	}
-
-	return nil
+func NewAlbumQuery(db *gorm.DB) *AlbumQuery {
+	return &AlbumQuery{db: db}
 }
 
 func (a *AlbumQuery) Albums() []*Album {
-	res := make([]*Album, 0, len(a.albums))
-
-	for _, k := range a.keys {
-		res = append(res, a.albums[k])
-	}
-
-	return res
+	var albums []*models.Album
+	a.db.Find(&albums)
+	return makeAlbumResolvers(albums)
 }
 
 type albumArgs struct {
@@ -62,29 +26,25 @@ type albumArgs struct {
 }
 
 func (a *AlbumQuery) Album(args albumArgs) *Album {
-	// TODO handle invalid id
-
-	return a.albums[string(args.ID)]
+	var album models.Album
+	a.db.First(&album, args.ID)
+	return &Album{am: &album}
 }
 
 type albumsByUserArgs struct {
 	UserID graphql.ID
 }
 
-func (a *AlbumQuery) AlbumsByUser(args albumsByUserArgs) ([]*Album, error) {
-	var res []*Album
+func (a *AlbumQuery) AlbumsByUser(args albumsByUserArgs) []*Album {
+	var albums []*models.Album
+	a.db.Where("user_id = ?", args.UserID).Find(&albums)
+	return makeAlbumResolvers(albums)
+}
 
-	for _, k := range a.keys {
-		userId, err := strconv.Atoi(string(args.UserID))
-		if err != nil {
-			return nil, err
-		}
-
-		a := a.albums[k]
-		if a.am.UserId == userId {
-			res = append(res, a)
-		}
+func makeAlbumResolvers(albums []*models.Album) []*Album {
+	var resolvers []*Album
+	for _, album := range albums {
+		resolvers = append(resolvers, &Album{am: album})
 	}
-
-	return res, nil
+	return resolvers
 }

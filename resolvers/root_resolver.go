@@ -1,23 +1,16 @@
 package resolvers
 
+import "gorm.io/gorm"
+
 type RootResolver struct {
 	*AlbumQuery
 	*PostQuery
 }
 
-func NewRootResolver(basedir string) (*RootResolver, error) {
-	a, err := NewAlbumQuery(basedir)
-	if err != nil {
-		return nil, err
-	}
-
-	p, err := NewPostQuery(basedir)
-	if err != nil {
-		return nil, err
-	}
+func NewRootResolver(db *gorm.DB) *RootResolver {
 
 	return &RootResolver{
-		AlbumQuery: a,
-		PostQuery:  p,
-	}, nil
+		AlbumQuery: NewAlbumQuery(db),
+		PostQuery:  NewPostQuery(db),
+	}
 }

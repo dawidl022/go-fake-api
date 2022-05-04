@@ -51,17 +51,12 @@ func (s *server) setup(conf *config.Config) {
 		log.Fatal("Cannot read grapql schema files:", err)
 	}
 
-	_, err = initDB(conf)
+	db, err := initDB(conf)
 	if err != nil {
 		log.Fatal("Cannot initialise database:", err)
 	}
 
-	root, err := resolvers.NewRootResolver(conf.BaseDir)
-	if err != nil {
-		log.Fatal("Cannot load data files:", err)
-	}
-
-	schema := graphql.MustParseSchema(string(b), root)
+	schema := graphql.MustParseSchema(string(b), resolvers.NewRootResolver(db))
 	s.routes(schema, conf.BaseDir)
 }
 
