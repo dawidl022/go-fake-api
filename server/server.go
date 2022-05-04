@@ -33,18 +33,26 @@ func newServer() server {
 }
 
 func StartServer() {
-	b, err := concatFiles("server/graphql", "query.graphql", "album.graphql", "post.graphql")
+	s := newServer()
+	s.setup("")
+
+	log.Fatal(http.ListenAndServe(":8080", s.router))
+}
+
+func (s *server) setup(basedir string) {
+	b, err := concatFiles(fmt.Sprintf("%sserver/graphql", basedir),
+		"query.graphql", "album.graphql", "post.graphql")
 	if err != nil {
 		log.Fatal("Cannot read grapql schema files")
 	}
 
-	root := resolvers.NewRootResolver()
+	root, err := resolvers.NewRootResolver(basedir)
+	if err != nil {
+		log.Fatal("Cannot load data files")
+	}
+
 	schema := graphql.MustParseSchema(string(b), root)
-
-	s := newServer()
-	s.routes(schema)
-
-	log.Fatal(http.ListenAndServe(":8080", s.router))
+	s.routes(schema, basedir)
 }
 
 func concatFiles(dirname string, filenames ...string) (string, error) {

@@ -1,31 +1,35 @@
 package server
 
-// import (
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
+import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 
-// 	"github.com/stretchr/testify/assert"
-// )
+	"github.com/stretchr/testify/assert"
+)
 
-// func TestHandleAlbums(t *testing.T) {
-// 	srv := newServer("../")
-// 	srv.routes()
+func TestHandleGraphiql(t *testing.T) {
+	srv := newServer()
+	srv.setup("../")
 
-// 	req := httptest.NewRequest("GET", "/albums", nil)
-// 	w := httptest.NewRecorder()
-// 	srv.r.ServeHTTP(w, req)
-// 	assert.Equal(t, http.StatusOK, w.Code)
-// }
+	req := httptest.NewRequest("GET", "/graphql", nil)
+	w := httptest.NewRecorder()
+	srv.router.ServeHTTP(w, req)
 
-// func TestHandleUserById(t *testing.T) {
-// 	srv := newServer("../")
-// 	srv.routes()
+	assert.Equal(t, http.StatusOK, w.Code)
+}
 
-// 	w := httptest.NewRecorder()
-// 	req := httptest.NewRequest(http.MethodGet, "/users/1", nil)
-// 	srv.r.ServeHTTP(w, req)
+func TestHandleQuery(t *testing.T) {
+	srv := newServer()
+	srv.setup("../")
 
-// 	assert.Equal(t, []byte(`{"Id":1,"Name":"Leanne Graham","Username":"Bret","Email":"Sincere@april.biz","Address":{"Street":"Kulas Light","Suite":"Apt. 556","City":"Gwenborough","Zipcode":"92998-3874","Geo":{"Lat":"-37.3159","Lng":"81.1496"}},"Phone":"1-770-736-8031 x56442","Website":"hildegard.org","Company":{"Name":"Romaguera-Crona","CatchPhrase":"Multi-layered client-server neural-net","Bs":"harness real-time e-markets"}}`),
-// 		w.Body.Bytes())
-// }
+	req := httptest.NewRequest("POST", "/query", strings.NewReader(
+		`{"operationName":null,"variables":{},"query":"{\n  album(id: 1) {\n    title\n    id\n    userId\n  }\n}\n"}`))
+	req.Header.Set("Content-type", "application/json")
+	w := httptest.NewRecorder()
+
+	srv.router.ServeHTTP(w, req)
+	assert.Equal(t, `{"data":{"album":{"title":"quidem molestiae enim","id":"1","userId":"1"}}}`,
+		w.Body.String())
+}

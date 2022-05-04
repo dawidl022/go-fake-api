@@ -2,6 +2,7 @@ package resolvers
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"server/models"
 	"strconv"
@@ -14,15 +15,18 @@ type PostQuery struct {
 	keys  []string
 }
 
-func NewPostQuery() *PostQuery {
+func NewPostQuery(basedir string) (*PostQuery, error) {
 	p := PostQuery{}
-	p.setup()
+	err := p.setup(basedir)
+	if err != nil {
+		return nil, err
+	}
 
-	return &p
+	return &p, nil
 }
 
-func (p *PostQuery) setup() error {
-	rawPosts, err := os.ReadFile("data/posts.json")
+func (p *PostQuery) setup(basedir string) error {
+	rawPosts, err := os.ReadFile(fmt.Sprintf("%sdata/posts.json", basedir))
 	if err != nil {
 		return err
 	}

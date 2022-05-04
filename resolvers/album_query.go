@@ -2,6 +2,7 @@ package resolvers
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"server/models"
 	"strconv"
@@ -14,15 +15,18 @@ type AlbumQuery struct {
 	keys   []string
 }
 
-func NewAlbumQuery() *AlbumQuery {
+func NewAlbumQuery(basedir string) (*AlbumQuery, error) {
 	a := AlbumQuery{}
-	a.setup()
+	err := a.setup(basedir)
+	if err != nil {
+		return nil, err
+	}
 
-	return &a
+	return &a, nil
 }
 
-func (a *AlbumQuery) setup() error {
-	rawAlbums, err := os.ReadFile("data/albums.json")
+func (a *AlbumQuery) setup(basedir string) error {
+	rawAlbums, err := os.ReadFile(fmt.Sprintf("%sdata/albums.json", basedir))
 	if err != nil {
 		return err
 	}
