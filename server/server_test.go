@@ -3,15 +3,21 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
+	"server/config"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+var testConf = &config.Config{
+	BaseDir:     "../",
+	DatabaseUrl: "postgresql://user:password@localhost:5432/fake?sslmode=disable",
+}
+
 func TestHandleGraphiql(t *testing.T) {
 	srv := newServer()
-	srv.setup("../")
+	srv.setup(testConf)
 
 	req := httptest.NewRequest("GET", "/graphql", nil)
 	w := httptest.NewRecorder()
@@ -22,7 +28,7 @@ func TestHandleGraphiql(t *testing.T) {
 
 func TestHandleQuery(t *testing.T) {
 	srv := newServer()
-	srv.setup("../")
+	srv.setup(testConf)
 
 	req := httptest.NewRequest("POST", "/query", strings.NewReader(
 		`{"operationName":null,"variables":{},"query":"{\n  album(id: 1) {\n    title\n    id\n    userId\n  }\n}\n"}`))
