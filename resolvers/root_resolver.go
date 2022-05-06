@@ -6,6 +6,7 @@ type RootResolver struct {
 	*AlbumQuery
 	*AlbumMutation
 	*PostQuery
+	*PostMutation
 }
 
 func NewRootResolver(db *gorm.DB) *RootResolver {
@@ -14,5 +15,6 @@ func NewRootResolver(db *gorm.DB) *RootResolver {
 		AlbumQuery:    NewAlbumQuery(db),
 		AlbumMutation: NewAlbumMutation(db),
 		PostQuery:     NewPostQuery(db),
+		PostMutation:  NewPostMutation(db),
 	}
 }

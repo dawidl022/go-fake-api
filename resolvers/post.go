@@ -12,11 +12,11 @@ type Post struct {
 }
 
 func (p *Post) Id() graphql.ID {
-	return graphql.ID(strconv.Itoa(p.pm.Id))
+	return graphql.ID(strconv.Itoa(int(p.pm.Id)))
 }
 
 func (p *Post) UserId() graphql.ID {
-	return graphql.ID(strconv.Itoa(p.pm.UserId))
+	return graphql.ID(strconv.Itoa(int(p.pm.UserId)))
 }
 
 func (p *Post) Title() string {

@@ -12,4 +12,8 @@ type Mutation {
     createAlbum(userId: ID!, title: String!): Album!
     deleteAlbum(id: ID!): Album!
     updateAlbum(id: ID!, userId: ID, title: String): Album!
+
+    createPost(userId: ID!, title: String!, body: String!): Post!
+    deletePost(id: ID!): Post!
+    updatePost(id: ID!, userId: ID, title: String, body: String): Post!
 }

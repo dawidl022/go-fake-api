@@ -1,7 +1,7 @@
 package models
 
 type Album struct {
-	ID     int
-	UserId int
+	ID     int32
+	UserId int32
 	Title  string
 }

@@ -12,11 +12,11 @@ type Album struct {
 }
 
 func (a *Album) ID() graphql.ID {
-	return graphql.ID(strconv.Itoa(a.am.ID))
+	return graphql.ID(strconv.Itoa(int(a.am.ID)))
 }
 
 func (a *Album) UserId() graphql.ID {
-	return graphql.ID(strconv.Itoa(a.am.UserId))
+	return graphql.ID(strconv.Itoa(int(a.am.UserId)))
 }
 
 func (a *Album) Title() string {

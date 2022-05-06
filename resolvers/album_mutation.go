@@ -36,7 +36,7 @@ func (a *AlbumMutation) CreateAlbum(args createAlbumArgs) (*Album, error) {
 		return nil, err
 	}
 
-	album := models.Album{UserId: userId, Title: args.Title}
+	album := models.Album{UserId: int32(userId), Title: args.Title}
 	a.db.Create(&album)
 
 	return &Album{am: &album}, nil
@@ -58,7 +58,7 @@ func (a *AlbumMutation) DeleteAlbum(args deleteAlbumArgs) (*Album, error) {
 
 type updateAlbumArgs struct {
 	ID     graphql.ID
-	UserId *int
+	UserId *int32
 	Title  *string
 }
 

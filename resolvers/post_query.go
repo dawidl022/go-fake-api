@@ -25,10 +25,13 @@ type postArgs struct {
 	ID graphql.ID
 }
 
-func (p *PostQuery) Post(args postArgs) *Post {
+func (p *PostQuery) Post(args postArgs) (*Post, error) {
 	var post models.Post
-	p.db.First(&post, args.ID)
-	return &Post{pm: &post}
+	result := p.db.First(&post, args.ID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &Post{pm: &post}, nil
 }
 
 type postsByUserArgs struct {
