@@ -6,6 +6,7 @@ require github.com/graph-gophers/graphql-go v1.4.0
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.7.1
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.5
