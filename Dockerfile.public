@@ -1,13 +1,20 @@
-FROM golang:1.18
+FROM golang:1.18-alpine3.15 AS build-stage
+
+WORKDIR /usr/src/app
+
+COPY . .
+RUN go build -v -o ./bin/server
+
+
+FROM alpine:3.15.4
 
 EXPOSE 3000
 WORKDIR /usr/src/app
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+COPY --from=build-stage /usr/src/app/bin/server /usr/src/app/
+COPY ./data ./data
 
-COPY . .
-RUN go build -v -o /usr/local/bin/server
+RUN adduser -D appuser
+USER appuser
 
-CMD ["server"]
+CMD ["./server"]
