@@ -31,7 +31,11 @@ func StartServer() {
 	s.r.Use(jsonHeaders)
 	s.routes()
 
-	http.ListenAndServe(":3000", s.r)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	http.ListenAndServe(":"+port, s.r)
 }
 
 func loadData(baseDir string) *data {
