@@ -1,8 +1,24 @@
-FROM alpine:latest
+FROM golang:1.18-alpine3.15 AS build-stage
 
-COPY bin/server /serv
-COPY data /data
-COPY server/graphql /server/graphql
-COPY server/templates /server/templates
+WORKDIR /usr/src/app
 
-CMD ["/serv"]
+COPY . .
+
+RUN go build -o serv
+
+
+FROM alpine:3.15
+
+WORKDIR /usr/src/app
+
+RUN adduser -D appuser
+
+COPY --from=build-stage /usr/src/app/serv .
+
+COPY data ./data
+COPY server/graphql ./server/graphql
+COPY server/templates ./server/templates
+
+USER appuser
+
+CMD ["./serv"]

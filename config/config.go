@@ -9,6 +9,6 @@ type Config struct {
 
 func LoadDefaults() (*Config, error) {
 	var c Config
-	err := envconfig.Process("fake", &c)
+	err := envconfig.Process("FAKE", &c)
 	return &c, err
 }
