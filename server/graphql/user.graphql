@@ -5,8 +5,8 @@ type User {
   email: String!
   address: Address!
   phone: String!
-  Website: String!
-  Company: Company!
+  website: String!
+  company: Company!
 }
 
 type Address {
