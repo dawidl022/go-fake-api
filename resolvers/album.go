@@ -1,10 +1,11 @@
 package resolvers
 
 import (
-	"server/models"
 	"strconv"
 
 	"github.com/graph-gophers/graphql-go"
+
+	"github.com/dawidl022/go-fake-api/models"
 )
 
 type Album struct {

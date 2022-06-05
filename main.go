@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"server/config"
-	"server/server"
+
+	"github.com/dawidl022/go-fake-api/config"
+	"github.com/dawidl022/go-fake-api/server"
 )
 
 func main() {

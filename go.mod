@@ -1,4 +1,4 @@
-module server
+module github.com/dawidl022/go-fake-api
 
 go 1.18
 

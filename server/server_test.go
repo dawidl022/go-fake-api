@@ -3,11 +3,12 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
-	"server/config"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/dawidl022/go-fake-api/config"
 )
 
 var testConf = &config.Config{

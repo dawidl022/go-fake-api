@@ -5,13 +5,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"server/config"
-	"server/resolvers"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	graphql "github.com/graph-gophers/graphql-go"
+
+	"github.com/dawidl022/go-fake-api/config"
+	"github.com/dawidl022/go-fake-api/resolvers"
 )
 
 type server struct {
@@ -42,7 +43,7 @@ func StartServer(conf *config.Config) {
 
 func (s *server) setup(conf *config.Config) {
 	b, err := concatFiles(fmt.Sprintf("%sserver/graphql", conf.BaseDir),
-		"query.graphql", "album.graphql", "post.graphql")
+		"query.graphql", "album.graphql", "post.graphql", "user.graphql")
 	if err != nil {
 		log.Fatal("Cannot read grapql schema files:", err)
 	}

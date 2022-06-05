@@ -1,10 +1,10 @@
 package resolvers
 
 import (
-	"server/models"
-
 	"github.com/graph-gophers/graphql-go"
 	"gorm.io/gorm"
+
+	"github.com/dawidl022/go-fake-api/models"
 )
 
 type AlbumQuery struct {

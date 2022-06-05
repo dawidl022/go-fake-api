@@ -1,19 +1,22 @@
 type Query {
-    albums: [Album!]!
-    album(id: ID!): Album!
-    albumsByUser(userId: ID!): [Album!]!
+  albums: [Album!]!
+  album(id: ID!): Album!
+  albumsByUser(userId: ID!): [Album!]!
 
-    posts: [Post!]!
-    post(id: ID!): Post!
-    postsByUser(userId: ID!): [Post!]!
+  posts: [Post!]!
+  post(id: ID!): Post!
+  postsByUser(userId: ID!): [Post!]!
+
+  users: [User!]!
+  # userById(id: ID!): User!
 }
 
 type Mutation {
-    createAlbum(userId: ID!, title: String!): Album!
-    deleteAlbum(id: ID!): Album!
-    updateAlbum(id: ID!, userId: ID, title: String): Album!
+  createAlbum(userId: ID!, title: String!): Album!
+  deleteAlbum(id: ID!): Album!
+  updateAlbum(id: ID!, userId: ID, title: String): Album!
 
-    createPost(userId: ID!, title: String!, body: String!): Post!
-    deletePost(id: ID!): Post!
-    updatePost(id: ID!, userId: ID, title: String, body: String): Post!
+  createPost(userId: ID!, title: String!, body: String!): Post!
+  deletePost(id: ID!): Post!
+  updatePost(id: ID!, userId: ID, title: String, body: String): Post!
 }

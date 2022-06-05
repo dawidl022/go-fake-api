@@ -15,6 +15,8 @@ RUN adduser -D appuser
 
 COPY --from=build-stage /usr/src/app/serv .
 
+# TODO bundle the data into the binary instead
+
 COPY data ./data
 COPY server/graphql ./server/graphql
 COPY server/templates ./server/templates

@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"server/config"
-	"server/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/dawidl022/go-fake-api/config"
+	"github.com/dawidl022/go-fake-api/models"
 )
 
 func initDB(conf *config.Config) (*gorm.DB, error) {
@@ -21,7 +22,9 @@ func initDB(conf *config.Config) (*gorm.DB, error) {
 	err = db.AutoMigrate(
 		&models.Album{},
 		&models.Post{},
-		// &models.User{},
+		&models.User{},
+		&models.Address{},
+		&models.Company{},
 	)
 	if err != nil {
 		return nil, err
@@ -48,6 +51,14 @@ func seedDB(db *gorm.DB, conf *config.Config) error {
 	db.Model(&models.Post{}).Count(&count)
 	if count == 0 {
 		err := load[models.Post](db, "posts", conf)
+		if err != nil {
+			return err
+		}
+	}
+
+	db.Model(&models.User{}).Count(&count)
+	if count == 0 {
+		err := load[models.User](db, "users", conf)
 		if err != nil {
 			return err
 		}
