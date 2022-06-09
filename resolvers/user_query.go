@@ -17,6 +17,8 @@ func NewUserQuery(db *gorm.DB) *UserQuery {
 	return &UserQuery{db: db}
 }
 
+// TODO handle case when fields are null
+
 func (u *UserQuery) Users() []*User {
 	var users []*models.User
 	u.db.Preload("Address").Preload("Company").Find(&users)

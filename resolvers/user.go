@@ -32,11 +32,11 @@ func (u *User) Address() *Address {
 	return &Address{a: u.u.Address}
 }
 
-func (u *User) Phone() string {
+func (u *User) Phone() *string {
 	return u.u.Phone
 }
 
-func (u *User) Website() string {
+func (u *User) Website() *string {
 	return u.u.Phone
 }
 

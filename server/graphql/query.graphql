@@ -19,4 +19,6 @@ type Mutation {
   createPost(userId: ID!, title: String!, body: String!): Post!
   deletePost(id: ID!): Post!
   updatePost(id: ID!, userId: ID, title: String, body: String): Post!
+
+  createUser(user: UserInput): User!
 }

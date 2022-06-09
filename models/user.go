@@ -5,20 +5,21 @@ type User struct {
 	Name      string
 	Username  string
 	Email     string
-	AddressID int
+	AddressID *int
 	Address   *Address
-	Phone     string
-	Website   string
-	CompanyID int
+	Phone     *string
+	Website   *string
+	CompanyID *int
 	Company   *Company
 }
 
 type Address struct {
 	ID      int
 	Street  string
-	Suite   string
+	Suite   *string
 	City    string
 	Zipcode string
+	Country string
 	Geo     *Geo `gorm:"embedded"`
 }
 
@@ -30,6 +31,6 @@ type Geo struct {
 type Company struct {
 	ID          int
 	Name        string
-	CatchPhrase string
-	Bs          string
+	CatchPhrase *string
+	Bs          *string
 }

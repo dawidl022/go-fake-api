@@ -10,10 +10,10 @@ func (c *Company) Name() string {
 	return c.c.Name
 }
 
-func (c *Company) CatchPhrase() string {
+func (c *Company) CatchPhrase() *string {
 	return c.c.CatchPhrase
 }
 
-func (c *Company) Bs() string {
+func (c *Company) Bs() *string {
 	return c.c.Bs
 }

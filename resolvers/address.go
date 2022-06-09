@@ -14,7 +14,7 @@ func (a *Address) Street() string {
 	return a.a.Street
 }
 
-func (a *Address) Suite() string {
+func (a *Address) Suite() *string {
 	return a.a.Suite
 }
 
@@ -24,6 +24,10 @@ func (a *Address) City() string {
 
 func (a *Address) Zipcode() string {
 	return a.a.Zipcode
+}
+
+func (a *Address) Country() string {
+	return a.a.Country
 }
 
 func (a *Address) Geo() *Geo {

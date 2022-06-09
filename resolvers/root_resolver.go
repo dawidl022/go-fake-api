@@ -8,6 +8,7 @@ type RootResolver struct {
 	*PostQuery
 	*PostMutation
 	*UserQuery
+	*UserMutation
 }
 
 func NewRootResolver(db *gorm.DB) *RootResolver {
@@ -18,5 +19,6 @@ func NewRootResolver(db *gorm.DB) *RootResolver {
 		PostQuery:     NewPostQuery(db),
 		PostMutation:  NewPostMutation(db),
 		UserQuery:     NewUserQuery(db),
+		UserMutation:  NewUserMutation(db),
 	}
 }
